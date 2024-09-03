@@ -1,6 +1,7 @@
 #include "main.h"
 #include <stdarg.h>
 #include <unistd.h>
+#include <string.h>
 
 int _printf(const char *format, ...)
 {
@@ -17,10 +18,22 @@ int _printf(const char *format, ...)
             switch (format[i])
             {
                 case 'c':
-                    count += write(1, &va_arg(args, int), 1);
+                    {
+                        char c = va_arg(args, int);
+                        count += write(1, &c, 1);
+                    }
                     break;
                 case 's':
-                    count += write(1, va_arg(args, char *), strlen(va_arg(args, char *)));
+                    {
+                        char *str = va_arg(args, char *);
+                        if (!str)
+                            str = "(null)";
+                        count += write(1, str, strlen(str));
+                    }
+                    break;
+                case 'd':
+                case 'i':
+                    count += print_number(va_arg(args, int));
                     break;
                 case '%':
                     count += write(1, "%", 1);
